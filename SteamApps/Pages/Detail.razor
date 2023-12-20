@@ -1,0 +1,373 @@
+﻿@page "/appdetails/{appId}"
+@using SteamApps.Model
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+
+<link href="/css/appdetails.css" rel="stylesheet" />
+
+
+@if (detail == null)
+{
+    <Spinner />
+}
+else
+{
+    <head>
+        <style>
+            body {
+                background-image: url('@detail.Background');
+                background-size: cover;
+                background-position: center;
+                background-repeat: no-repeat;
+                background-attachment: fixed;
+            }
+        </style>
+    </head>
+
+    <div class="container mb-3 mt-3">
+        <button class="btn btn-primary" @onclick="() => BackToList()">Back to List</button>
+    </div>
+    <div class="text-light">
+        <div class="container">
+            <div class="row ">
+                <hr />
+                <div class="col-sm-12 col-lg-7 col-md-12 order-1 order-lg-1">
+                    <h1>
+                        @detail.Name
+                    </h1>
+
+                    <div class="mt-1" style="font-size:12px;"><span>Released:</span>@detail.ReleaseDate.Date</div>
+
+                    <div class="game-image">
+                        <img src="@detail.HeaderImage" alt="Game Image" class="img-fluid shadow-lg">
+                    </div>
+
+                    <div class="latest-news p-2 mt-3">
+                        <h3 class="pl-4">Latest News </h3>
+                        @if (news != null)
+                        {
+                            foreach (var newsItem in news)
+                            {
+                                <div class="card mb-4 bg-light bg-opacity-25 w-100">
+                                    <div class="card-body">
+                                        <h6 class="card-title"><b>@newsItem.Title</b></h6>
+                                        @{
+                                            string content = newsItem.Contents;
+
+                                            // Make content within [h1] tags bold
+                                            content = content.Replace("[h1]", "<strong>").Replace("[/h1]", "</strong>");
+
+                                            // Replace [list], [*], and [/list] with HTML list tags
+                                            content = content.Replace("[list]", "<ul>").Replace("[/list]", "</ul>").Replace("[*]", "<li>").Replace("[/*]", "</li>");
+
+                                        }
+
+                                        @if (newsItem.Contents != null)
+                                        {
+                                            <div class="content">
+                                                <p class="card-text">@((MarkupString)content)</p>
+                                            </div>
+                                        }
+
+                                        @if (newsItem.Author != null)
+                                        {
+                                            <hr />
+
+                                            <p class="card-text badge bg-success text-white"><i class="bi bi-person-circle"></i> @newsItem.Author</p>
+                                        }
+                                    </div>
+                                </div>
+                            }
+                        }
+
+                    </div>
+                </div>
+                <div class="col-sm-12 col-lg-5 col-md-12 order-2 order-lg-2">
+                    <div class="game-details">
+                        <div>
+                            <div class="game-details mb-5">
+
+                                <!-- Short Description -->
+                                <div class="mt-3">
+                                    <h6>About the Game</h6>
+                                    @if (detail.ShortDescription != null)
+                                    {
+                                        @((MarkupString)detail.ShortDescription)
+                                    }
+                                    else if (detail.DetailedDescription != null)
+                                    {
+                                        @((MarkupString)detail.DetailedDescription)
+                                    }
+                                    else
+                                    {
+                                        <p>No Description</p>
+                                    }
+
+                                </div>
+
+                                @if (detail.PriceOverview != null)
+                                {
+                                    <button class="btn btn-success bold mt-3"> <i class="bi bi-cart-check"></i> @detail.PriceOverview.FinalFormatted</button>
+                                }
+
+                                <!-- Categories -->
+                                @if (detail.Categories != null)
+                                {
+                                    <div class="game-genre mt-3">
+                                        <h6>Categories</h6>
+                                        @foreach (var category in detail.Categories)
+                                        {
+                                            <span class="badge bg-secondary me-2">@category.Description</span>
+                                        }
+                                    </div>
+                                }
+
+
+                                <!-- Metacritic -->
+                                @if (detail.Metacritic != null)
+                                {
+                                    <div class="mt-3">
+                                        <h6>Metascore</h6>
+                                        <h1><span class="badge @GetScoreColorClass() bg-success">@detail.Metacritic.Score</span></h1>
+                                    </div>
+                                }
+
+                                <!-- Supported Language -->
+                                @if (detail.SupportedLanguages != null)
+                                {
+                                    <div class="game-genre mt-3">
+                                        <h6>Supported Languages</h6>
+                                        @((MarkupString)detail.SupportedLanguages)
+                                    </div>
+                                }
+
+                                <!-- Developers -->
+                                @if (detail.Developers != null)
+                                {
+                                    <div class="game-genre mt-3">
+                                        <h6>Developers</h6>
+                                        @foreach (var dev in detail.Developers)
+                                        {
+                                            <span class="badge bg-secondary me-2">@dev</span>
+                                        }
+                                    </div>
+                                }
+
+                                <!-- Developers -->
+                                @if (detail.Developers != null)
+                                {
+                                    <div class="game-genre mt-3">
+                                        <h6>Publishers</h6>
+                                        @foreach (var pub in detail.Publishers)
+                                        {
+                                            <span class="badge bg-secondary me-2">@pub</span>
+                                        }
+                                    </div>
+                                }
+
+                                <hr />
+
+                                <!-- Screenshots -->
+                                <div class="mt-3">
+                                    <h6>Screenshots</h6>
+                                    @if (detail.Screenshots != null && detail.Screenshots.Any())
+                                    {
+                                        <!-- Large screens -->
+                                        <div class="row g-2 d-none d-sm-flex shadow-lg">
+                                            @foreach (var screenshot in detail.Screenshots)
+                                            {
+
+                                                <div class="col-md-3 mb-2">
+                                                    <a data-fancybox="screenshots" href="@screenshot.PathFull">
+                                                        <img src="@screenshot.PathFull" class="img-fluid" alt="...">
+                                                    </a>
+                                                </div>
+                                            }
+                                        </div>
+
+                                        <!-- Mobile screens -->
+                                        <div class="d-flex d-sm-none shadow-lg">
+                                            <div id="smallScreenshotsCarousel" class="carousel slide" data-bs-ride="carousel">
+                                                <div class="carousel-inner">
+                                                    @foreach (var screenshot in detail.Screenshots)
+                                                    {
+                                                        <div class="carousel-item @(IsFirstScreenshotActive(screenshot) ? "active" : "")">
+                                                            <a data-fancybox="screenshots" href="@screenshot.PathFull">
+                                                                <img src="@screenshot.PathFull" class="d-block w-100" alt="...">
+                                                            </a>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <button class="carousel-control-prev" type="button" data-bs-target="#smallScreenshotsCarousel" data-bs-slide="prev">
+                                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Previous</span>
+                                                </button>
+                                                <button class="carousel-control-next" type="button" data-bs-target="#smallScreenshotsCarousel" data-bs-slide="next">
+                                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                                    <span class="visually-hidden">Next</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+
+                                <hr />
+
+                                <!-- Platforms -->
+                                @if (detail.Platforms != null)
+                                {
+                                    <div class="game-genre mt-3">
+                                        <h6>Platforms</h6>
+                                        <div>
+                                            <span class="badge bg-info me-2">Windows: @detail.Platforms.Windows</span>
+                                            <span class="badge bg-info me-2">Mac: @detail.Platforms.Mac</span>
+                                            <span class="badge bg-info me-2">Linux: @detail.Platforms.Linux</span>
+                                        </div>
+                                    </div>
+                                }
+
+
+                                <!-- PC Requirements -->
+                                @if (detail.PcRequirements != null)
+                                {
+                                    <div class="mt-3">
+                                        <h6 class="mb-3"><i class="bi bi-pc-display-horizontal"></i> PC Requirements</h6>
+                                        <div class="card bg-light bg-opacity-25 w-100">
+                                            <div class="card-body shadow-lg">
+                                                @((MarkupString)detail.PcRequirements.Minimum)
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- MAC Requirements -->
+                                @if (detail.MacRequirements != null)
+                                {
+                                    <div class="mt-3">
+                                        <h6 class="mb-3"><i class="bi bi-apple"></i> Mac Requirements</h6>
+                                        <div class="card bg-light bg-opacity-25 w-100">
+                                            <div class="card-body shadow-lg">
+                                                @((MarkupString)detail.MacRequirements.Minimum)
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+
+                                <!-- Linux Requirements -->
+                                @if (detail.LinuxRequirements != null)
+                                {
+                                    <div class="mt-3">
+                                        <h6 class="mb-3"><i class="bi bi-ubuntu"></i> Linux Requirements</h6>
+                                        <div class="card bg-light bg-opacity-25 w-100">
+                                            <div class="card-body shadow-lg">
+                                                @((MarkupString)detail.LinuxRequirements.Minimum)
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+}
+
+
+@code {
+    [Parameter]
+    public string appId { get; set; }
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
+
+
+    private AppDetail detail;
+    private List<NewsItem> news;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppDetailsAsync(appId);
+        await LoadAppNewsAsync(appId);
+    }
+
+    private async Task LoadAppDetailsAsync(string appId)
+    {
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<AppDetail>($"https://localhost:44322/api/getAppDetail?appId={appId}");
+            if (response != null)
+            {
+                if (detail == null)
+                {
+                    Console.WriteLine(response);
+                    detail = response;
+                }
+                else
+                {
+                    detail = null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+        }
+    }
+
+    private async Task LoadAppNewsAsync(string appId)
+    {
+        try
+        {
+            var response = await HttpClient.GetFromJsonAsync<List<NewsItem>>($"https://localhost:44322/api/getAppNews?appId={appId}");
+            if (response != null)
+            {
+                if (news == null)
+                {
+                    Console.WriteLine(response.ToString());
+                    news = response;
+                }
+                else
+                {
+                    news = null;
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+        }
+    }
+
+    private void BackToList() => NavigationManager.NavigateTo($"/");
+
+    private string GetScoreColorClass()
+    {
+        string bgColorClass;
+
+        switch (detail.Metacritic?.Score)
+        {
+            case var score when score >= 80:
+                bgColorClass = "bg-success";
+                break;
+            case var score when score >= 60:
+                bgColorClass = "bg-info";
+                break;
+            case var score when score >= 40:
+                bgColorClass = "bg-warning";
+                break;
+            default:
+                bgColorClass = "bg-danger";
+                break;
+        }
+
+        return bgColorClass;
+    }
+
+    bool IsFirstScreenshotActive(Screenshot screenshot)
+    {
+        return screenshot == detail.Screenshots.First();
+    }
+}
+

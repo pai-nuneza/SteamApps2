@@ -1,0 +1,22 @@
+﻿
+.content img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+.content a {
+    color: #07d1ff;
+}
+
+.score-circle {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #007bff;
+    color: #fff;
+    text-align: center;
+    line-height: 30px;
+}

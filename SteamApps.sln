@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamApps", "SteamApps\SteamApps.csproj", "{2CFBC06F-B357-4C90-AA23-D3307EDAC066}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SteamAPI", "SteamAPI\SteamAPI.csproj", "{9EC3EA93-3A6A-49E9-AC31-751619AE48FE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{2CFBC06F-B357-4C90-AA23-D3307EDAC066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2CFBC06F-B357-4C90-AA23-D3307EDAC066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2CFBC06F-B357-4C90-AA23-D3307EDAC066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2CFBC06F-B357-4C90-AA23-D3307EDAC066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9EC3EA93-3A6A-49E9-AC31-751619AE48FE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9EC3EA93-3A6A-49E9-AC31-751619AE48FE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9EC3EA93-3A6A-49E9-AC31-751619AE48FE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9EC3EA93-3A6A-49E9-AC31-751619AE48FE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B872963B-98BF-4485-898A-C8E9A8935EC1}
+	EndGlobalSection
+EndGlobal

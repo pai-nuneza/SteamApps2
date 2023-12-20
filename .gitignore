@@ -1,0 +1,43 @@
+# .NET Core
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.user
+*.vscode/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# Blazor
+bin/
+obj/
+*.dll
+*.exe
+*.pdb
+*.user
+*.vscode/
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+SteamApps/obj/
+SteamApi/obj/

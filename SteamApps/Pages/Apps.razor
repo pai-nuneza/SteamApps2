@@ -1,0 +1,93 @@
+﻿@page "/"
+@using SteamApps.Model
+@inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+
+<link href="/css/applist.css" rel="stylesheet" />
+
+@if (apps == null)
+{
+    <Spinner />
+}
+else if (apps.Any())
+{
+    <div class="container mt-4 mb-5">
+        <div class="row">
+            <div class="col-md-12">
+                <h2>Available Steam Games</h2>
+            </div>
+
+            @foreach (var app in apps)
+            {
+                <div class="col-md-12">
+                    <div class="row rounded text-light shadow-lg bg-gradient mt-4 p-3 clickable-card" @onclick="() => ViewAppDetails(app)">
+                        <div class="col-md-3 d-flex align-items-center justify-content-center text-center">
+                            <img src="@app.CapsuleImage" class="img-fluid shadow-lg">
+                        </div>
+                        <div class="col-md-9">
+                            <div class="card-block p-3">
+                                <h4 class="card-title "><strong>@app.Name</strong></h4>
+                                <ul class="list-inline mt-auto">
+                                    <li class="list-inline-item">@app.ShortDescription </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p>No apps available.</p>
+}
+
+
+@code {
+    private List<AppInfo> apps;
+    private int currentPage = 1;
+    private int pageSize = 20;
+
+    [Inject]
+    private HttpClient HttpClient { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadAppListAsync(currentPage, pageSize);
+    }
+
+    private async Task LoadAppListAsync(int currentPage, int pageSize)
+    {
+        try
+        {
+            int nextPage = currentPage + 1;
+            var response = await HttpClient.GetFromJsonAsync<List<AppInfo>>($"https://localhost:44322/api/getAppList?page={currentPage}&pageSize={pageSize}");
+            if (response != null && response.Any())
+            {
+                if (apps == null)
+                {
+                    apps = response;
+                }
+                else
+                {
+                    apps.Clear();
+                    apps.AddRange(response);
+                }
+
+                currentPage = nextPage;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+        }
+    }
+
+    private void ViewAppDetails(AppInfo app)
+    {
+        Console.WriteLine($"Viewing details for App ID: {app.AppId}");
+        var appId = app.AppId;
+        NavigationManager.NavigateTo($"/appdetails/{appId}");
+    }
+
+}
