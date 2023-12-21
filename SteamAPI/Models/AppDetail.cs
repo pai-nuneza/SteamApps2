@@ -71,8 +71,8 @@ namespace SteamAPI.Models
         //[JsonPropertyName("platforms")]
         //public Platforms? Platforms { get; set; }
 
-        //[JsonPropertyName("metacritic")]
-        //public Metacritic? Metacritic { get; set; }
+        [JsonPropertyName("metacritic")]
+        public Metacritic? Metacritic { get; set; }
 
         //[JsonPropertyName("categories")]
         //public List<Category>? Categories { get; set; }

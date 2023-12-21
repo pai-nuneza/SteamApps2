@@ -37,9 +37,14 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 
+
     <script>
-        function scrollToBottom(element) {
-            element.scrollTop = element.scrollHeight;
+        function detectScrollEnd(dotnetHelper) {
+            window.onscroll = () => {
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                    dotnetHelper.invokeMethodAsync('LoadMoreItems');
+                }
+            };
         }
     </script>
 </body>

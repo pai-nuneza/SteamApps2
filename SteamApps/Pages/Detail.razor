@@ -43,13 +43,20 @@ else
 
                     <div class="latest-news p-2 mt-3">
                         <h3 class="pl-4">Latest News </h3>
-                        @if (news != null)
-                        {
-                            foreach (var newsItem in news)
+
+                        <div class="accordion" id="accordionPanelsStayOpenExample">
+
+                            @if (news != null)
                             {
-                                <div class="card mb-4 bg-light bg-opacity-25 w-100">
-                                    <div class="card-body">
-                                        <h6 class="card-title"><b>@newsItem.Title</b></h6>
+                                foreach (var (newsItem, index) in news.Select((value, index) => (value, index)))
+                                {
+                                    <div class="accordion-item bg-transparent mb-3 content" style="padding-top:0px;">
+                                        <h2 class="accordion-header" id="panelsStayOpen-heading-@index">
+                                            <button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse-@index" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                                <b>@newsItem.Title</b>
+                                            </button>
+                                        </h2>
+
                                         @{
                                             string content = newsItem.Contents;
 
@@ -61,24 +68,26 @@ else
 
                                         }
 
-                                        @if (newsItem.Contents != null)
-                                        {
-                                            <div class="content">
-                                                <p class="card-text">@((MarkupString)content)</p>
+                                        <div id="panelsStayOpen-collapse-@index" class="accordion-collapse collapse @(index < 3 ? "show" : "")" aria-labelledby="panelsStayOpen-heading-@index">
+                                            <div class="accordion-body">
+                                                @if (newsItem.Contents != null)
+                                                {
+                                                    @((MarkupString)content)
+                                                }
+
+                                                @if (newsItem.Author != null)
+                                                {
+                                                    <hr />
+
+                                                    <p class="card-text badge bg-success text-white"><i class="bi bi-person-circle"></i> @newsItem.Author</p>
+                                                }
                                             </div>
-                                        }
-
-                                        @if (newsItem.Author != null)
-                                        {
-                                            <hr />
-
-                                            <p class="card-text badge bg-success text-white"><i class="bi bi-person-circle"></i> @newsItem.Author</p>
-                                        }
+                                        </div>
                                     </div>
-                                </div>
+                                }
                             }
-                        }
 
+                        </div>
                     </div>
                 </div>
                 <div class="col-sm-12 col-lg-5 col-md-12 order-2 order-lg-2">
@@ -323,15 +332,12 @@ else
             var response = await HttpClient.GetFromJsonAsync<List<NewsItem>>($"https://localhost:44322/api/getAppNews?appId={appId}");
             if (response != null)
             {
-                if (news == null)
-                {
-                    Console.WriteLine(response.ToString());
-                    news = response;
-                }
-                else
-                {
-                    news = null;
-                }
+                Console.WriteLine(response.ToString());
+                news = response;
+            }
+            else
+            {
+                news = null;    
             }
         }
         catch (Exception ex)

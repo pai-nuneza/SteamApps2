@@ -1,6 +1,8 @@
 ﻿@page "/"
 @using SteamApps.Model
 @inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
+@inject IJSRuntime JSRuntime
+
 
 <link href="/css/applist.css" rel="stylesheet" />
 
@@ -36,6 +38,8 @@ else if (apps.Any())
             }
         </div>
     </div>
+
+   
 }
 else
 {
@@ -46,7 +50,7 @@ else
 @code {
     private List<AppInfo> apps;
     private int currentPage = 1;
-    private int pageSize = 20;
+    private int pageSize = 10;
 
     [Inject]
     private HttpClient HttpClient { get; set; }
@@ -54,8 +58,9 @@ else
     protected override async Task OnInitializedAsync()
     {
         await LoadAppListAsync(currentPage, pageSize);
+        await JSRuntime.InvokeVoidAsync("detectScrollEnd", DotNetObjectReference.Create(this));
     }
-
+  
     private async Task LoadAppListAsync(int currentPage, int pageSize)
     {
         try
@@ -64,23 +69,22 @@ else
             var response = await HttpClient.GetFromJsonAsync<List<AppInfo>>($"https://localhost:44322/api/getAppList?page={currentPage}&pageSize={pageSize}");
             if (response != null && response.Any())
             {
-                if (apps == null)
-                {
-                    apps = response;
-                }
-                else
-                {
-                    apps.Clear();
-                    apps.AddRange(response);
-                }
-
-                currentPage = nextPage;
+                apps ??= new List<AppInfo>();
+                apps.AddRange(response);
+                this.currentPage = nextPage;
+                StateHasChanged();
             }
         }
         catch (Exception ex)
         {
             Console.Error.WriteLine(ex.Message);
         }
+    }
+
+    [JSInvokable]
+    public async Task LoadMoreItems()
+    {
+        await LoadAppListAsync(currentPage, pageSize);
     }
 
     private void ViewAppDetails(AppInfo app)

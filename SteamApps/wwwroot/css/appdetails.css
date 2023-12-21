@@ -6,6 +6,13 @@
     margin: 0 auto;
 }
 
+.content video {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
 .content a {
     color: #07d1ff;
 }
