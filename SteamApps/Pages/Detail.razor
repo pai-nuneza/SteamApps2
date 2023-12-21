@@ -1,5 +1,6 @@
 ﻿@page "/appdetails/{appId}"
 @using SteamApps.Model
+@using System.Text.RegularExpressions
 @inject Microsoft.AspNetCore.Components.NavigationManager NavigationManager
 
 <link href="/css/appdetails.css" rel="stylesheet" />
@@ -23,8 +24,8 @@ else
         </style>
     </head>
 
-    <div class="container mb-3 mt-3">
-        <button class="btn btn-primary" @onclick="() => BackToList()">Back to List</button>
+    <div class="container mb-2 mt-2">
+        <button class="btn btn-sm btn-outline-primary" @onclick="() => BackToList()">Back to List</button>
     </div>
     <div class="text-light">
         <div class="container">
@@ -35,13 +36,13 @@ else
                         @detail.Name
                     </h1>
 
-                    <div class="mt-1" style="font-size:12px;"><span>Released:</span>@detail.ReleaseDate.Date</div>
+                    <div class="mb-1 badge bg-gradient" style="font-size:12px;"><span>Released:</span>@detail.ReleaseDate.Date</div>
 
                     <div class="game-image">
                         <img src="@detail.HeaderImage" alt="Game Image" class="img-fluid shadow-lg">
                     </div>
 
-                    <div class="latest-news p-2 mt-3">
+                    <div class="latest-news mt-3">
                         <h3 class="pl-4">Latest News </h3>
 
                         <div class="accordion" id="accordionPanelsStayOpenExample">
@@ -52,7 +53,7 @@ else
                                 {
                                     <div class="accordion-item bg-transparent mb-3 content" style="padding-top:0px;">
                                         <h2 class="accordion-header" id="panelsStayOpen-heading-@index">
-                                            <button class="accordion-button bg-secondary text-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse-@index" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                                            <button class="accordion-button bg-secondary bg-gradient text-light" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapse-@index" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
                                                 <b>@newsItem.Title</b>
                                             </button>
                                         </h2>
@@ -74,15 +75,37 @@ else
                                                 {
                                                     @((MarkupString)content)
                                                 }
-
+                                                
                                                 @if (newsItem.Author != null)
                                                 {
                                                     <hr />
+                                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                                        <div class="reaction-section">
+                                                            <button type="button" class="btn btn-sm btn-primary me-2">
+                                                                <i class="bi bi-hand-thumbs-up"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-secondary me-2">
+                                                                <i class="bi bi-hand-thumbs-down"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-danger me-2">
+                                                                <i class="bi bi-heart"></i>
+                                                            </button>
+                                                            <button type="button" class="btn btn-sm btn-outline-info">
+                                                                <i class="bi bi-chat"></i> View comments
+                                                            </button>
+                                                        </div>
 
-                                                    <p class="card-text badge bg-success text-white"><i class="bi bi-person-circle"></i> @newsItem.Author</p>
+                                                        <div class="card-text text-white">
+                                                           <i class="bi bi-person-circle"></i> <div class="badge bg-success">@newsItem.Author</div>
+                                                        </div>
+                                                    </div>
+                                                   
                                                 }
+                                               
                                             </div>
+                                            
                                         </div>
+
                                     </div>
                                 }
                             }
@@ -96,8 +119,11 @@ else
                             <div class="game-details mb-5">
 
                                 <!-- Short Description -->
-                                <div class="mt-3">
-                                    <h6>About the Game</h6>
+                                <div class="mt-3 ">
+                                    <div>
+                                        <h6><b>About the Game</b></h6>
+                                    </div>
+                                  
                                     @if (detail.ShortDescription != null)
                                     {
                                         @((MarkupString)detail.ShortDescription)
@@ -122,10 +148,10 @@ else
                                 @if (detail.Categories != null)
                                 {
                                     <div class="game-genre mt-3">
-                                        <h6>Categories</h6>
+                                        <h6><b>Categories</b></h6>
                                         @foreach (var category in detail.Categories)
                                         {
-                                            <span class="badge bg-secondary me-2">@category.Description</span>
+                                            <span class="badge bg-gradient me-2 mb-2">@category.Description</span>
                                         }
                                     </div>
                                 }
@@ -135,7 +161,7 @@ else
                                 @if (detail.Metacritic != null)
                                 {
                                     <div class="mt-3">
-                                        <h6>Metascore</h6>
+                                        <h6><b>Metascore</b></h6>
                                         <h1><span class="badge @GetScoreColorClass() bg-success">@detail.Metacritic.Score</span></h1>
                                     </div>
                                 }
@@ -143,11 +169,23 @@ else
                                 <!-- Supported Language -->
                                 @if (detail.SupportedLanguages != null)
                                 {
+                                    // Remove unwanted characters and split by commas and semicolons
+                                    var cleanedLanguages = Regex.Replace(detail.SupportedLanguages, @"<[^>]*>|[*]", "").Split(new[] { ',', ';' }).Select(lang => lang.Trim());
+
                                     <div class="game-genre mt-3">
                                         <h6>Supported Languages</h6>
-                                        @((MarkupString)detail.SupportedLanguages)
+                                        <ul>
+                                            @foreach (var language in cleanedLanguages)
+                                            {
+                                                if (!string.IsNullOrWhiteSpace(language))
+                                                {
+                                                    <li>@language</li>
+                                                }
+                                            }
+                                        </ul>
                                     </div>
                                 }
+
 
                                 <!-- Developers -->
                                 @if (detail.Developers != null)
