@@ -41,3 +41,9 @@ obj/
 
 SteamApps/obj/
 SteamApi/obj/
+/.vs/SteamApps/FileContentIndex/331b12bf-133f-47f0-a643-cb94199b7936.vsidx
+/.vs/SteamApps/FileContentIndex/7d7a69b8-6685-4d0d-b2b2-197f9702e050.vsidx
+*.vsidx
+/.vs/SteamApps/FileContentIndex/b507982e-b99f-42d1-ba29-f8f096f108cb.vsidx
+/.vs/SteamApps/config/applicationhost.config
+/.vs/SteamApps/DesignTimeBuild/.dtbcache.v2
